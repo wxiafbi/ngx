@@ -28,6 +28,7 @@ public class MqttSenderService {
             MqttClient client = new MqttClient("tcp://mqtt-server:1883", clientId);
             client.connect();
             clients.put(clientId, client);
+            System.out.println("设备[" + device.deviceId() + "]已连接到MQTT服务器");
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             schedulers.put(clientId, scheduler);
