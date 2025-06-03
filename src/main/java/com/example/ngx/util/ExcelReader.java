@@ -17,7 +17,8 @@ public class ExcelReader {
             String group = row.getCell(2).getStringCellValue();    // 第三列
             String deviceId = row.getCell(4).getStringCellValue(); // 第五列
             String password = row.getCell(5).getStringCellValue(); // 第六列
-            devices.add(new DeviceInfo(group, deviceId, password));
+            float longitude = (float)row.getCell(11).getNumericCellValue(); // 第七列
+            devices.add(new DeviceInfo(group, deviceId, password, longitude));
         }
         workbook.close();
         return devices;

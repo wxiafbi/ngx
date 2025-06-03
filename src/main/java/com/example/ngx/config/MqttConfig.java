@@ -13,7 +13,7 @@ public class MqttConfig {
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[] {"tcp://mqtt-server:1883"});
+        options.setServerURIs(new String[] {"tcp://10.8.2.69:1883"});
         factory.setConnectionOptions(options);
         return factory;
     }
