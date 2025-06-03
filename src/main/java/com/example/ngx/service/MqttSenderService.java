@@ -41,7 +41,6 @@ public class MqttSenderService {
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             schedulers.put(clientId, scheduler);
-
             // scheduler.scheduleAtFixedRate(() -> {
             // try {
             // // 修改随机数生成：将第一个nextInt(70)强制转换为float类型，并调整格式化字符串为%f
@@ -51,11 +50,8 @@ public class MqttSenderService {
             // MqttMessage message = new MqttMessage(payload.getBytes());
             // message.setQos(0);
             // client.publish(topic, message);
-
             scheduler.scheduleAtFixedRate(() -> {
                 try {
-                    // 产生一个范围在大于10小于79之间的随机2位小数
-                    // double dis = (random.nextInt(69) + 10);
                     for (int i = 0; i < 3; i++) { // 循环优化重复逻辑
                         String payload = String.format(
                                 i == 0 ? "{\"Distance\":%.2f,\"amp\":%d}"
@@ -70,13 +66,16 @@ public class MqttSenderService {
                         client.publish(topic, message);
 
                         try {
-                            Thread.sleep(19000); // 统一处理延时
+                            Thread.sleep(19000);
                         } catch (InterruptedException e) {
                             System.err.println("设备[" + device.deviceId() + "]任务被中断");
-                            Thread.currentThread().interrupt(); // 恢复中断状态
-                            return; // 直接退出任务
+                            Thread.currentThread().interrupt();
+                            return;
                         }
                     }
+                    // 封装传感器数据发送逻辑
+                    sendSensorData(client, topic, device);
+
                 } catch (MqttException e) {
                     System.err.println("消息发送失败: " + e.getMessage());
                 }
@@ -126,5 +125,22 @@ public class MqttSenderService {
         if (scheduler != null) {
             scheduler.shutdown();
         }
+    }
+
+    /**
+     * 封装传感器数据发送方法
+     * @param client MQTT客户端实例
+     * @param topic 发布主题
+     * @param device 设备信息对象
+     */
+    private void sendSensorData(MqttClient client, String topic, DeviceInfo device) throws MqttException {
+        String payload1 = String.format("{\"valu\":%.2f,\"temp\":%.2f,\"electricity\":%.2f}", 
+            (float)random.nextInt(70), 
+            (float)random.nextInt(50), 
+            (float)random.nextInt(50));
+        System.out.println("发送设备[" + device.deviceId() + "]的消息: " + payload1);
+        MqttMessage message1 = new MqttMessage(payload1.getBytes());
+        message1.setQos(0);
+        client.publish(topic, message1);
     }
 }
